@@ -6,22 +6,28 @@ using Foundation;
 using CoreGraphics;
 using TheTaleOfAHero.Models;
 
+
 namespace TheTaleOfAHero
 {
     public class GameScene : SKScene, ISKPhysicsContactDelegate
     {
-
-        SKSpriteNode simpleEnemy;
-        SKSpriteNode simpleBlock;
+        Map map;
 
         public GameScene(IntPtr handle) : base(handle)
         {
-            Scene.Size = new CGSize(1600, 1000);
+            map = new Map(4800, 1000);
+            Scene.Size = new CGSize(map.Width, map.Height);
 
+            Camera = new SKCameraNode()
+            {
+                Position = new CGPoint(800, 500)
+            };
+
+            // Setup gravity
             PhysicsWorld.Gravity = new CGVector(0, (nfloat)(-0.1));
-            PhysicsWorld.ContactDelegate = this;
 
-            // TODO: make GameScene size as the map size and implement camera
+            // Assign contact delegate to this object (impl. ISKPhysicsContactDelegate)
+            PhysicsWorld.ContactDelegate = this;
         }
 
         public override void DidMoveToView(SKView view)
@@ -30,31 +36,56 @@ namespace TheTaleOfAHero
         }
 
         void RenderScene() {
+            // TODO: move to map factory
+            map.Enemies.Add(EnemySprite.CreateEnemyAt(new CGPoint(800, 500)));
+            map.Platforms.Add(PlatformSprite.CreatePlatformAt(PlatformType.Short, new CGPoint(800, 250)));
+            map.Hero = HeroSprite.CreateHeroAt(new CGPoint(Frame.GetMidX() * 0.25, Frame.GetMidY()));
 
-            simpleEnemy = EnemySprite.CreateEnemyAt("simple", new CGPoint(this.Frame.GetMidX(), this.Frame.GetMidY()));
-            simpleBlock = PlatformSprite.CreatePlatformAt(PlatformType.Short, new CGPoint(Frame.GetMidX(), Frame.GetMidY() * 0.5));
 
+            //AddChild(GetBackground());
+            foreach(var enemy in map.Enemies)
+            {
+                AddChild(enemy);
+            }
+            foreach(var platform in map.Platforms)
+            {
+                AddChild(platform);
+            }
+            AddChild(map.Hero);
 
-            AddChild(GetBackground());
-            AddChild(simpleEnemy);
-            AddChild(simpleBlock);
         }
 
         [Export("didBeginContact:")]
         public void DidBeginContact(SKPhysicsContact contact)
         {
             // TODO: handle collision of the nodes
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
 
 
         SKSpriteNode GetBackground() {
+
+            // TODO: make background for the full map
+
+            //SKSpriteNode background = new SKSpriteNode();
+            //for (int i = 0; i < map.Width; i += 1600)
+            //{
+            //    var bgpart = SKSpriteNode.FromImageNamed("GameStage.png");
+            //    //bgpart.AnchorPoint = new CGPoint(0, 0);
+            //    bgpart.ZPosition = -1;
+            //    bgpart.Size = new CGSize(1600, 1000);
+            //    //bgpart.Position = new CGPoint(i, 0);
+            //    background.AddChild(bgpart);
+            //}
+            //return SKSpriteNode.FromTexture(background.Texture);
+
             var background = SKSpriteNode.FromImageNamed("GameStage.png");
             background.Name = "background";
             background.AnchorPoint = new CGPoint(0, 0);
             background.ZPosition = -1;
             background.Size = new CGSize(this.Scene.Size.Width, this.Scene.Size.Height);
+            background.Size = new CGSize(1600, 1000);
             return background;
         }
 
@@ -62,12 +93,63 @@ namespace TheTaleOfAHero
         {
             //simpleEnemy.PhysicsBody.ApplyForce(new CGVector(100, 0));
             //simpleEnemy.PhysicsBody.Velocity = new CGVector(100, 0);
-            AddChild(EnemySprite.CreateEnemyAt("hey", theEvent.LocationInWindow));
+            AddChild(EnemySprite.CreateEnemyAt(theEvent.LocationInWindow));
         }
+
+
+        #region Key Handling
+
+        bool _leftKeyPressed, _rightKeyPressed;
+
+
+        public override void KeyDown(NSEvent theEvent)
+        {
+            // Do something when key is pressed
+            switch(theEvent.KeyCode) 
+            {
+                case 123:
+                    _leftKeyPressed = true;
+                    break;
+                case 124:
+                    _rightKeyPressed = true;
+                    break;
+            }
+            // 124 - right
+            // 123 - left
+        }
+
+        public override void KeyUp(NSEvent theEvent)
+        {
+            // Release variables for stop moving
+            switch(theEvent.KeyCode)
+            {
+                case 123:
+                    _leftKeyPressed = false;
+                    break;
+                case 124:
+                    _rightKeyPressed = false;
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Movement
+
+        public void DoHeroMovement()
+        {
+            if (_leftKeyPressed)
+                map.Hero.MoveLeft();
+            if (_rightKeyPressed)
+                map.Hero.MoveRight();
+        }
+
+        #endregion
 
         public override void Update(double currentTime)
         {
             // Called before each frame is rendered
+            DoHeroMovement();
         }
     }
 }

@@ -69,14 +69,16 @@
     <Folder Include="Models\" />
     <Folder Include="Resources\Enemy\" />
     <Folder Include="Resources\Platform\" />
+    <Folder Include="Resources\Hero\" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Spaceship.png" />
     <BundleResource Include="GameScenes\GameScene.sks" />
     <BundleResource Include="GameScenes\MenuScene.sks" />
     <BundleResource Include="Resources\GameStage.png" />
     <BundleResource Include="Resources\Enemy\EnemyDuty.png" />
     <BundleResource Include="Resources\Platform\ShortPlatform.png" />
+    <BundleResource Include="Resources\Platform\MediumPlatform.png" />
+    <BundleResource Include="Resources\Hero\Hero.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

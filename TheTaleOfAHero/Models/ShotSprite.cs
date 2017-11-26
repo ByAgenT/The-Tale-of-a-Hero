@@ -2,6 +2,7 @@
 using SpriteKit;
 using CoreGraphics;
 
+
 namespace TheTaleOfAHero.Models
 {
     public class ShotSprite : SKSpriteNode

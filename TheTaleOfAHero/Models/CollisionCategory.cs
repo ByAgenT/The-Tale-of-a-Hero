@@ -3,6 +3,13 @@
 
 namespace TheTaleOfAHero.Models
 {
+
+    /// <summary>
+    /// Collision category.
+    /// 
+    /// Class contains bitmasks for built-in 
+    /// SpriteKit collision detection system
+    /// </summary>
     public static class CollisionCategory
     {
         public const uint Hero = 0x1 << 1;

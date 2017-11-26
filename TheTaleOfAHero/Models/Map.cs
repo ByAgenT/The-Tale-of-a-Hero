@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+
 namespace TheTaleOfAHero.Models
 {
     public class Map
@@ -9,10 +10,15 @@ namespace TheTaleOfAHero.Models
         public int Height { get; set; }
         public List<EnemySprite> Enemies { get; set; }
         public List<PlatformSprite> Platforms { get; set; }
+        public HeroSprite Hero { get; set; }
 
 
-        public Map()
+        public Map(int width, int height)
         {
+            Width = width;
+            Height = height;
+            Enemies = new List<EnemySprite>();
+            Platforms = new List<PlatformSprite>();
         }
 
     }
