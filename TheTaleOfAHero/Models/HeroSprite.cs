@@ -19,6 +19,7 @@ namespace TheTaleOfAHero.Models
             PhysicsBody.CategoryBitMask = CollisionCategory.Hero;
             PhysicsBody.ContactTestBitMask = CollisionCategory.Enemy | CollisionCategory.Spell;
             PhysicsBody.AngularDamping = 0;
+            PhysicsBody.AllowsRotation = false;
         }
 
         #region Hero Movement

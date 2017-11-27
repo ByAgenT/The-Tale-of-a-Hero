@@ -17,6 +17,7 @@ namespace TheTaleOfAHero.Models
             Texture = SKTexture.FromImageNamed(ENEMY_DUTY_IMAGE);
             Size = Texture.Size;
             PhysicsBody = SKPhysicsBody.CreateRectangularBody(Size);
+            PhysicsBody.AllowsRotation = false;
             PhysicsBody.CategoryBitMask = CollisionCategory.Enemy;
             PhysicsBody.ContactTestBitMask = CollisionCategory.Hero | CollisionCategory.Spell | CollisionCategory.Platform;
         }

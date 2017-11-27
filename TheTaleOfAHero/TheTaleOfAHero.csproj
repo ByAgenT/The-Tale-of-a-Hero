@@ -70,6 +70,7 @@
     <Folder Include="Resources\Enemy\" />
     <Folder Include="Resources\Platform\" />
     <Folder Include="Resources\Hero\" />
+    <Folder Include="Resources\Menu\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="GameScenes\GameScene.sks" />
@@ -79,6 +80,15 @@
     <BundleResource Include="Resources\Platform\ShortPlatform.png" />
     <BundleResource Include="Resources\Platform\MediumPlatform.png" />
     <BundleResource Include="Resources\Hero\Hero.png" />
+    <BundleResource Include="Resources\Menu\background.png" />
+    <BundleResource Include="Resources\Menu\exit_button_pressed.png" />
+    <BundleResource Include="Resources\Menu\exit_button.png" />
+    <BundleResource Include="Resources\Menu\logo.png" />
+    <BundleResource Include="Resources\Menu\mouse.png" />
+    <BundleResource Include="Resources\Menu\settings_button_pressed.png" />
+    <BundleResource Include="Resources\Menu\settings_button.png" />
+    <BundleResource Include="Resources\Menu\start_button_pressed.png" />
+    <BundleResource Include="Resources\Menu\start_button.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

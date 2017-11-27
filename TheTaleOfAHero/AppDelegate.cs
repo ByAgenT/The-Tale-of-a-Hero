@@ -17,7 +17,8 @@ namespace TheTaleOfAHero
 
             // Getting GameScene for presenting on the window
             // TODO: replace with MenuScene
-            var scene = SKNode.FromFile<GameScene>("GameScenes/GameScene");
+            //var scene = SKNode.FromFile<GameScene>("GameScenes/GameScene");
+            var scene = SKNode.FromFile<MenuScene>("GameScenes/MenuScene");
 
             // Set the scale mode to scale to fit the window
             scene.ScaleMode = SKSceneScaleMode.ResizeFill;

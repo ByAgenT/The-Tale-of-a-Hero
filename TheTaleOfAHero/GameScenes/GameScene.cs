@@ -42,7 +42,7 @@ namespace TheTaleOfAHero
             map.Hero = HeroSprite.CreateHeroAt(new CGPoint(Frame.GetMidX() * 0.25, Frame.GetMidY()));
 
 
-            //AddChild(GetBackground());
+            DrawBackground();
             foreach(var enemy in map.Enemies)
             {
                 AddChild(enemy);
@@ -64,29 +64,20 @@ namespace TheTaleOfAHero
 
 
 
-        SKSpriteNode GetBackground() {
+        void DrawBackground() {
 
-            // TODO: make background for the full map
+            // TODO: optimize background rendering
 
-            //SKSpriteNode background = new SKSpriteNode();
-            //for (int i = 0; i < map.Width; i += 1600)
-            //{
-            //    var bgpart = SKSpriteNode.FromImageNamed("GameStage.png");
-            //    //bgpart.AnchorPoint = new CGPoint(0, 0);
-            //    bgpart.ZPosition = -1;
-            //    bgpart.Size = new CGSize(1600, 1000);
-            //    //bgpart.Position = new CGPoint(i, 0);
-            //    background.AddChild(bgpart);
-            //}
-            //return SKSpriteNode.FromTexture(background.Texture);
-
-            var background = SKSpriteNode.FromImageNamed("GameStage.png");
-            background.Name = "background";
-            background.AnchorPoint = new CGPoint(0, 0);
-            background.ZPosition = -1;
-            background.Size = new CGSize(this.Scene.Size.Width, this.Scene.Size.Height);
-            background.Size = new CGSize(1600, 1000);
-            return background;
+            SKSpriteNode background = new SKSpriteNode();
+            for (int i = 0; i < map.Width; i += 1600)
+            {
+                var bgpart = SKSpriteNode.FromImageNamed("GameStage.png");
+                bgpart.AnchorPoint = new CGPoint(0, 0);
+                bgpart.ZPosition = -1;
+                bgpart.Size = new CGSize(1600, 1000);
+                bgpart.Position = new CGPoint(i, 0);
+                AddChild(bgpart);
+            }
         }
 
         public override void MouseDown(NSEvent theEvent)
@@ -150,6 +141,7 @@ namespace TheTaleOfAHero
         {
             // Called before each frame is rendered
             DoHeroMovement();
+            Camera.Position = new CGPoint(map.Hero.Position.X, Camera.Position.Y);
         }
     }
 }
