@@ -30,7 +30,6 @@ namespace TheTaleOfAHero.Models
             PhysicsBody.Dynamic = false;
             PhysicsBody.CategoryBitMask = CollisionCategory.Platform;
             PhysicsBody.ContactTestBitMask = CollisionCategory.Hero | CollisionCategory.Enemy;
-            //PhysicsBody.CollisionBitMask = 0;
         }
 
         public static PlatformSprite CreatePlatformAt(PlatformType type, CGPoint point) {

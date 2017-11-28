@@ -84,7 +84,7 @@ namespace TheTaleOfAHero
         {
             //simpleEnemy.PhysicsBody.ApplyForce(new CGVector(100, 0));
             //simpleEnemy.PhysicsBody.Velocity = new CGVector(100, 0);
-            AddChild(EnemySprite.CreateEnemyAt(theEvent.LocationInWindow));
+            AddChild(EnemySprite.CreateEnemyAt(theEvent.LocationInNode(this)));
         }
 
 
@@ -141,7 +141,7 @@ namespace TheTaleOfAHero
         {
             // Called before each frame is rendered
             DoHeroMovement();
-            Camera.Position = new CGPoint(map.Hero.Position.X, Camera.Position.Y);
+            //Camera.Position = new CGPoint(map.Hero.Position.X, Camera.Position.Y);
         }
     }
 }

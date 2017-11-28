@@ -26,12 +26,17 @@ namespace TheTaleOfAHero.Models
 
         public void MoveLeft()
         {
-            RunAction(SKAction.MoveBy(-2, 0, 0));
+            RunAction(SKAction.MoveBy(-3, 0, 0));
         }
 
         public void MoveRight() 
         {
-            RunAction(SKAction.MoveBy(2, 0, 0));
+            RunAction(SKAction.MoveBy(3, 0, 0));
+        }
+
+        public void Jump()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
