@@ -24,7 +24,7 @@ namespace TheTaleOfAHero
             };
 
             // Setup gravity
-            PhysicsWorld.Gravity = new CGVector(0, (nfloat)(-0.1));
+            PhysicsWorld.Gravity = new CGVector(0, -5);
 
             // Assign contact delegate to this object (impl. ISKPhysicsContactDelegate)
             PhysicsWorld.ContactDelegate = this;
@@ -40,14 +40,15 @@ namespace TheTaleOfAHero
             map.Enemies.Add(EnemySprite.CreateEnemyAt(new CGPoint(800, 500)));
             map.Platforms.Add(PlatformSprite.CreatePlatformAt(PlatformType.Short, new CGPoint(800, 250)));
             map.Hero = HeroSprite.CreateHeroAt(new CGPoint(Frame.GetMidX() * 0.25, Frame.GetMidY()));
+            map.Platforms.Add(PlatformSprite.CreatePlatformAt(PlatformType.Medium, new CGPoint(Frame.GetMidX() * 0.25, Frame.GetMidY() * 0.25)));
 
 
             DrawBackground();
-            foreach(var enemy in map.Enemies)
+            foreach (var enemy in map.Enemies)
             {
                 AddChild(enemy);
             }
-            foreach(var platform in map.Platforms)
+            foreach (var platform in map.Platforms)
             {
                 AddChild(platform);
             }
@@ -58,8 +59,35 @@ namespace TheTaleOfAHero
         [Export("didBeginContact:")]
         public void DidBeginContact(SKPhysicsContact contact)
         {
-            // TODO: handle collision of the nodes
-            //throw new System.NotImplementedException();
+            // Initialize variables for bodies
+            SKPhysicsBody firstBody, secondBody;
+
+            // Detect smaller object
+            if (contact.BodyA.CategoryBitMask < contact.BodyB.CategoryBitMask)
+            {
+                firstBody = contact.BodyA;
+                secondBody = contact.BodyB;
+            }
+            else
+            {
+                firstBody = contact.BodyB;
+                secondBody = contact.BodyA;
+            }
+
+            // Handling collision with a hero and a platform
+            if ((firstBody.CategoryBitMask & CollisionCategory.Hero) != 0 && 
+                (secondBody.CategoryBitMask & CollisionCategory.Platform) != 0)
+            {
+                map.Hero.ResetJumps();
+            }
+
+            // Handling collision with a hero and an enemy
+            if ((firstBody.CategoryBitMask & CollisionCategory.Hero) != 0 &&
+                (secondBody.CategoryBitMask & CollisionCategory.Enemy) != 0)
+            {
+                secondBody.Node.RemoveFromParent();
+                map.Enemies.Remove((EnemySprite)secondBody.Node);
+            }
         }
 
 
@@ -82,8 +110,6 @@ namespace TheTaleOfAHero
 
         public override void MouseDown(NSEvent theEvent)
         {
-            //simpleEnemy.PhysicsBody.ApplyForce(new CGVector(100, 0));
-            //simpleEnemy.PhysicsBody.Velocity = new CGVector(100, 0);
             AddChild(EnemySprite.CreateEnemyAt(theEvent.LocationInNode(this)));
         }
 
@@ -104,15 +130,19 @@ namespace TheTaleOfAHero
                 case 124:
                     _rightKeyPressed = true;
                     break;
+                case 126:
+                    map.Hero.Jump();
+                    break;
             }
             // 124 - right
             // 123 - left
+            // 126 - jump
         }
 
         public override void KeyUp(NSEvent theEvent)
         {
             // Release variables for stop moving
-            switch(theEvent.KeyCode)
+            switch (theEvent.KeyCode)
             {
                 case 123:
                     _leftKeyPressed = false;
@@ -137,11 +167,28 @@ namespace TheTaleOfAHero
 
         #endregion
 
+        #region Game Condition
+
+        bool IsEndGameCondition()
+        {
+            return map.Enemies.Count == 0 || map.Hero.Position.Y < 0;
+        }
+
+        #endregion
+
         public override void Update(double currentTime)
         {
-            // Called before each frame is rendered
             DoHeroMovement();
+
+            // End game condititon
+            if(IsEndGameCondition())
+            {
+                var menuScene = FromFile<MenuScene>("GameScenes/MenuScene");
+                menuScene.ScaleMode = SKSceneScaleMode.ResizeFill;
+                View.PresentScene(menuScene);
+            }
             //Camera.Position = new CGPoint(map.Hero.Position.X, Camera.Position.Y);
         }
+
     }
 }

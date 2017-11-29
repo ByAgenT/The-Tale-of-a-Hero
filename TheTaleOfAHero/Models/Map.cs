@@ -21,5 +21,9 @@ namespace TheTaleOfAHero.Models
             Platforms = new List<PlatformSprite>();
         }
 
+        public static Map CreateMapFromFile(string filename)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

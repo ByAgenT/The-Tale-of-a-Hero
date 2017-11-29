@@ -100,6 +100,7 @@ namespace TheTaleOfAHero
                 case "settings":
                     break;
                 case "exit":
+                    NSApplication.SharedApplication.Terminate(this);
                     break;
             }
         }

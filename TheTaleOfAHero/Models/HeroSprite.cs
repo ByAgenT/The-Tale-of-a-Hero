@@ -10,6 +10,8 @@ namespace TheTaleOfAHero.Models
         const string RESOURCE_PATH = "Hero/";
         const string HERO_STAND_IMAGE = RESOURCE_PATH + "Hero.png";
 
+        int _jumpsAvailiable = 2;
+
 
         public HeroSprite()
         {
@@ -18,7 +20,7 @@ namespace TheTaleOfAHero.Models
             PhysicsBody = SKPhysicsBody.CreateRectangularBody(Size);
             PhysicsBody.CategoryBitMask = CollisionCategory.Hero;
             PhysicsBody.ContactTestBitMask = CollisionCategory.Enemy | CollisionCategory.Spell;
-            PhysicsBody.AngularDamping = 0;
+            //PhysicsBody.AngularDamping = 0; 
             PhysicsBody.AllowsRotation = false;
         }
 
@@ -35,6 +37,26 @@ namespace TheTaleOfAHero.Models
         }
 
         public void Jump()
+        {
+            if(_jumpsAvailiable > 0)
+            {
+                PhysicsBody.ApplyImpulse(new CGVector(0, 80));
+                PhysicsBody.ApplyForce(new CGVector(0, 500));
+                --_jumpsAvailiable;    
+            }
+
+        }
+
+        public void ResetJumps()
+        {
+            _jumpsAvailiable = 2;
+        }
+
+        #endregion
+
+        #region Shooting
+
+        public void ShootSpell()
         {
             throw new NotImplementedException();
         }
