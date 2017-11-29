@@ -44,13 +44,13 @@ namespace TheTaleOfAHero
 
 
             DrawBackground();
-            foreach (var enemy in map.Enemies)
-            {
-                AddChild(enemy);
-            }
             foreach (var platform in map.Platforms)
             {
                 AddChild(platform);
+            }
+            foreach (var enemy in map.Enemies)
+            {
+                AddChild(enemy);
             }
             AddChild(map.Hero);
 
@@ -110,7 +110,9 @@ namespace TheTaleOfAHero
 
         public override void MouseDown(NSEvent theEvent)
         {
-            AddChild(EnemySprite.CreateEnemyAt(theEvent.LocationInNode(this)));
+            var enemy = EnemySprite.CreateEnemyAt(theEvent.LocationInNode(this));
+            map.Enemies.Add(enemy);
+            AddChild(enemy);
         }
 
 

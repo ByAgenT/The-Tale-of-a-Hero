@@ -89,6 +89,8 @@
     <BundleResource Include="Resources\Menu\settings_button.png" />
     <BundleResource Include="Resources\Menu\start_button_pressed.png" />
     <BundleResource Include="Resources\Menu\start_button.png" />
+    <BundleResource Include="Resources\Hero\HeroJump.png" />
+    <BundleResource Include="Resources\Hero\HeroMoving.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
