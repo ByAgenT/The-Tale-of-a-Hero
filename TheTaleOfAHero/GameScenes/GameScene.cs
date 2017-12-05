@@ -15,7 +15,9 @@ namespace TheTaleOfAHero
 
         public GameScene(IntPtr handle) : base(handle)
         {
-            map = new Map(4800, 1000);
+            //map = new Map(4800, 1000);
+            map = Map.CreateMapFromFile("Map.txt");
+
             Scene.Size = new CGSize(map.Width, map.Height);
 
             Camera = new SKCameraNode()
@@ -36,13 +38,7 @@ namespace TheTaleOfAHero
         }
 
         void RenderScene() {
-            // TODO: move to map factory
-            map.Enemies.Add(EnemySprite.CreateEnemyAt(new CGPoint(800, 500)));
-            map.Platforms.Add(PlatformSprite.CreatePlatformAt(PlatformType.Short, new CGPoint(800, 250)));
-            map.Hero = HeroSprite.CreateHeroAt(new CGPoint(Frame.GetMidX() * 0.25, Frame.GetMidY()));
-            map.Platforms.Add(PlatformSprite.CreatePlatformAt(PlatformType.Medium, new CGPoint(Frame.GetMidX() * 0.25, Frame.GetMidY() * 0.25)));
-
-
+            
             DrawBackground();
             foreach (var platform in map.Platforms)
             {

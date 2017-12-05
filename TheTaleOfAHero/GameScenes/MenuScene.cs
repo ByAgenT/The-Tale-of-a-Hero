@@ -4,14 +4,13 @@ using AppKit;
 using SpriteKit;
 using Foundation;
 using CoreGraphics;
+using TheTaleOfAHero.Models;
 
 
 namespace TheTaleOfAHero
 {
     public class MenuScene : SKScene
     {
-
-        // TODO: change texture on button hovering
 
         const string MENU_RESUORCES = "Menu/";
 
@@ -26,6 +25,7 @@ namespace TheTaleOfAHero
 
         public MenuScene(IntPtr handle) : base(handle)
         {
+            UserInteractionEnabled = true;
         }
 
         public override void DidMoveToView(SKView view)
@@ -67,22 +67,27 @@ namespace TheTaleOfAHero
         /// </summary>
         void RenderButtons()
         {
-            // Start button
-            var start_button = SKSpriteNode.FromImageNamed(START_BUTTON_IMAGE);
-            start_button.Name = "start";
-            start_button.Position = new CGPoint(Frame.GetMidX(), Frame.GetMidY() * 1.25);
+            var start_button = Button.CreateButtonAt(
+                SKTexture.FromImageNamed(START_BUTTON_IMAGE),
+                SKTexture.FromImageNamed(START_PRESSED_BUTTON_IMAGE),
+                "start",
+                new CGPoint(Frame.GetMidX(), Frame.GetMidY() * 1.25)
+            );
+            var settings_button = Button.CreateButtonAt(
+                SKTexture.FromImageNamed(SETTINGS_BUTTON_IMAGE),
+                SKTexture.FromImageNamed(SETTINGS_PRESSED_BUTTON_IMAGE),
+                "settings",
+                new CGPoint(Frame.GetMidX(), Frame.GetMidY() * 0.75)
+            );
+            var exit_button = Button.CreateButtonAt(
+                SKTexture.FromImageNamed(EXIT_BUTTON_IMAGE),
+                SKTexture.FromImageNamed(EXIT_PRESSED_BUTTON_IMAGE),
+                "exit",
+                new CGPoint(Frame.GetMidX(), Frame.GetMidY() * 0.25)
+            );
+
             AddChild(start_button);
-
-            // Settings button
-            var settings_button = SKSpriteNode.FromImageNamed(SETTINGS_BUTTON_IMAGE);
-            settings_button.Name = "settings";
-            settings_button.Position = new CGPoint(Frame.GetMidX(), Frame.GetMidY() * 0.75);
             AddChild(settings_button);
-
-            // Exit button
-            var exit_button = SKSpriteNode.FromImageNamed(EXIT_BUTTON_IMAGE);
-            exit_button.Name = "exit";
-            exit_button.Position = new CGPoint(Frame.GetMidX(), Frame.GetMidY() * 0.25);
             AddChild(exit_button);
         }
 
@@ -93,7 +98,7 @@ namespace TheTaleOfAHero
             switch(element.Name)
             {
                 case "start":
-                    var gameScene = SKNode.FromFile<GameScene>("GameScenes/GameScene");
+                    var gameScene = FromFile<GameScene>("GameScenes/GameScene");
                     gameScene.ScaleMode = SKSceneScaleMode.ResizeFill;
                     View.PresentScene(gameScene);
                     break;

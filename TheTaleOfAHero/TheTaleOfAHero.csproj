@@ -91,6 +91,9 @@
     <BundleResource Include="Resources\Menu\start_button.png" />
     <BundleResource Include="Resources\Hero\HeroJump.png" />
     <BundleResource Include="Resources\Hero\HeroMoving.png" />
+    <BundleResource Include="Resources\Map.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -111,6 +114,7 @@
     <Compile Include="Models\CollisionCategory.cs" />
     <Compile Include="Models\PlatformType.cs" />
     <Compile Include="Models\ShotSprite.cs" />
+    <Compile Include="Models\Button.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainMenu.xib" />
