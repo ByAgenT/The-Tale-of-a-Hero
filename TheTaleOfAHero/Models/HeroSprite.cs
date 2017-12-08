@@ -27,7 +27,8 @@ namespace TheTaleOfAHero.Models
             PhysicsBody = SKPhysicsBody.CreateRectangularBody(Size);
             PhysicsBody.CategoryBitMask = CollisionCategory.Hero;
             PhysicsBody.ContactTestBitMask = CollisionCategory.Enemy | CollisionCategory.Spell;
-            //PhysicsBody.AngularDamping = 0; 
+            // XOR Spell bitmask to avoid collision
+            PhysicsBody.CollisionBitMask ^= CollisionCategory.Spell;
             PhysicsBody.AllowsRotation = false;
         }
 
@@ -46,7 +47,7 @@ namespace TheTaleOfAHero.Models
             else if (Texture == _heroMoving)
                 ApplyTexture(_heroStand);
             
-            RunAction(SKAction.MoveBy(-3, 0, 0));
+            RunAction(SKAction.MoveBy(-5, 0, 0));
         }
 
         public void MoveRight() 
@@ -61,7 +62,7 @@ namespace TheTaleOfAHero.Models
             else if (Texture == _heroMoving)
                 ApplyTexture(_heroStand);
             
-            RunAction(SKAction.MoveBy(3, 0, 0));
+            RunAction(SKAction.MoveBy(5, 0, 0));
         }
 
         public void Jump()
@@ -86,9 +87,16 @@ namespace TheTaleOfAHero.Models
 
         #region Shooting
 
-        public void ShootSpell()
+        public void ShootSpell(CGPoint position)
         {
-            throw new NotImplementedException();
+            // Create vector of the movement
+            var vector = new CGVector(position.X - Position.X, position.Y - Position.Y);
+
+            // Create spell instance place it into the world and force it to attack
+            var spell = ShotSprite.CreateShotAt(Position, SpellType.Hero);
+            Parent.AddChild(spell);
+            spell.AttackByVector(vector);
+            spell.RunAction(SKAction.RepeatActionForever(SKAction.RotateByAngle((nfloat)6.28, 1)));
         }
 
         #endregion
@@ -120,6 +128,5 @@ namespace TheTaleOfAHero.Models
             }; 
         }
 
-        // TODO: lock rotation by physics
     }
 }

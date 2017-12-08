@@ -94,6 +94,8 @@
     <BundleResource Include="Resources\Map.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </BundleResource>
+    <BundleResource Include="Resources\Hero\HeroSpell.png" />
+    <BundleResource Include="Resources\Enemy\EnemySpell.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

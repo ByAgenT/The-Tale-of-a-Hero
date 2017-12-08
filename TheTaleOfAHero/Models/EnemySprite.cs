@@ -12,6 +12,8 @@ namespace TheTaleOfAHero.Models
         const string ENEMY_DUTY_IMAGE = RESOURCE_PATH + "EnemyDuty.png";
         const string ENEMY_ATTACK_IMAGE = RESOURCE_PATH + "EnemyAttack.png";
 
+        int Cooldown { get; set; }
+
         public EnemySprite()
         {
             Texture = SKTexture.FromImageNamed(ENEMY_DUTY_IMAGE);
@@ -20,7 +22,32 @@ namespace TheTaleOfAHero.Models
             PhysicsBody.AllowsRotation = false;
             PhysicsBody.CategoryBitMask = CollisionCategory.Enemy;
             PhysicsBody.ContactTestBitMask = CollisionCategory.Hero | CollisionCategory.Spell | CollisionCategory.Platform;
+
         }
+
+        #region Shooting and Hero Detection
+
+        public void ShootSpell(CGPoint position)
+        {
+            Cooldown = 100;
+            var vector = new CGVector(position.X - Position.X, position.Y - Position.Y);
+
+
+            var spell = ShotSprite.CreateShotAt(Position, SpellType.Enemy);
+            Parent.AddChild(spell);
+            spell.AttackByVector(vector);
+            spell.ZRotation = (nfloat)Math.Atan2(vector.dy, vector.dx);
+        }
+
+        public void AttackIfCooldowned(CGPoint position)
+        {
+            if (Cooldown == 0)
+                ShootSpell(position);
+            else
+                Cooldown--;
+        }
+
+        #endregion
 
         public static EnemySprite CreateEnemyAt(CGPoint point) {
             return new EnemySprite()
@@ -28,10 +55,6 @@ namespace TheTaleOfAHero.Models
                 Position = point
             };
         }
-
-        // TODO: implement ability to fire
-        // TODO: implement behavior
-        // TODO: put all enemy behavior in this file
 
     }
 }

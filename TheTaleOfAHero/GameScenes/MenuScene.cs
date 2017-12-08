@@ -2,7 +2,6 @@
 
 using AppKit;
 using SpriteKit;
-using Foundation;
 using CoreGraphics;
 using TheTaleOfAHero.Models;
 

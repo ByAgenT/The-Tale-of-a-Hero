@@ -11,7 +11,6 @@ namespace TheTaleOfAHero.Models
 
         public Button(SKTexture texture_passive, SKTexture texture_active, string name)
         {
-            //UserInteractionEnabled = true;
             _texture_passive = texture_passive;
             _texture_active = texture_active;
             Name = name;

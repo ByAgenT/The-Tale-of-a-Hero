@@ -11,18 +11,25 @@ namespace TheTaleOfAHero
 {
     public class GameScene : SKScene, ISKPhysicsContactDelegate
     {
-        Map map;
+
+        // TODO: remove magic numbers
+
+        const string MAP_FILE = "Map.txt";
+
+        Map GameMap { get; set; }
+
 
         public GameScene(IntPtr handle) : base(handle)
         {
-            //map = new Map(4800, 1000);
-            map = Map.CreateMapFromFile("Map.txt");
+            // Create map object from the file
+            GameMap = Map.CreateMapFromFile(MAP_FILE);
 
-            Scene.Size = new CGSize(map.Width, map.Height);
+            // Setup scene size to match map size
+            Scene.Size = new CGSize(GameMap.Width, GameMap.Height);
 
             Camera = new SKCameraNode()
             {
-                Position = new CGPoint(800, 500)
+                Position = new CGPoint(1600 / 2, 1000 / 2)
             };
 
             // Setup gravity
@@ -40,16 +47,29 @@ namespace TheTaleOfAHero
         void RenderScene() {
             
             DrawBackground();
-            foreach (var platform in map.Platforms)
+            foreach (var platform in GameMap.Platforms)
             {
                 AddChild(platform);
             }
-            foreach (var enemy in map.Enemies)
+            foreach (var enemy in GameMap.Enemies)
             {
                 AddChild(enemy);
             }
-            AddChild(map.Hero);
+            AddChild(GameMap.Hero);
 
+        }
+
+        void UpdateCamera()
+        {
+            var heroPosition = GameMap.Hero.Position;
+            int mapSegment = 0;
+            for (int border = 1600; border <= GameMap.Width; border += 1600)
+            {
+                ++mapSegment;
+                if (GameMap.Hero.Position.X < border && GameMap.Hero.Position.X > border - 1600)
+                    break;
+            }
+            Camera.Position = new CGPoint(1600 * (mapSegment - 1) + 1600 / 2, 1000 / 2);
         }
 
         [Export("didBeginContact:")]
@@ -58,7 +78,7 @@ namespace TheTaleOfAHero
             // Initialize variables for bodies
             SKPhysicsBody firstBody, secondBody;
 
-            // Detect smaller object
+            // Detect bitmask
             if (contact.BodyA.CategoryBitMask < contact.BodyB.CategoryBitMask)
             {
                 firstBody = contact.BodyA;
@@ -74,15 +94,34 @@ namespace TheTaleOfAHero
             if ((firstBody.CategoryBitMask & CollisionCategory.Hero) != 0 && 
                 (secondBody.CategoryBitMask & CollisionCategory.Platform) != 0)
             {
-                map.Hero.ResetJumps();
+                GameMap.Hero.ResetJumps();
             }
 
             // Handling collision with a hero and an enemy
             if ((firstBody.CategoryBitMask & CollisionCategory.Hero) != 0 &&
                 (secondBody.CategoryBitMask & CollisionCategory.Enemy) != 0)
             {
-                secondBody.Node.RemoveFromParent();
-                map.Enemies.Remove((EnemySprite)secondBody.Node);
+                //secondBody.Node.RemoveFromParent();
+                //map.Enemies.Remove((EnemySprite)secondBody.Node);
+            }
+
+            // Handling collision with a enemy and a spell
+            if ((firstBody.CategoryBitMask & CollisionCategory.Enemy) != 0 &&
+                (secondBody.CategoryBitMask & CollisionCategory.Spell) != 0)
+            {
+                if(((ShotSprite)secondBody.Node).Type == SpellType.Hero)
+                {
+                    secondBody.Node.RemoveFromParent();
+                    firstBody.Node.RemoveFromParent();
+                    GameMap.Enemies.Remove((EnemySprite)firstBody.Node);    
+                }
+            }
+
+            // Handling collision with a spell and a platform
+            if((firstBody.CategoryBitMask & CollisionCategory.Spell) != 0 &&
+               (secondBody.CategoryBitMask & CollisionCategory.Platform) != 0)
+            {
+                firstBody.Node.RemoveFromParent();
             }
         }
 
@@ -93,7 +132,7 @@ namespace TheTaleOfAHero
             // TODO: optimize background rendering
 
             SKSpriteNode background = new SKSpriteNode();
-            for (int i = 0; i < map.Width; i += 1600)
+            for (int i = 0; i < GameMap.Width; i += 1600)
             {
                 var bgpart = SKSpriteNode.FromImageNamed("GameStage.png");
                 bgpart.AnchorPoint = new CGPoint(0, 0);
@@ -106,9 +145,10 @@ namespace TheTaleOfAHero
 
         public override void MouseDown(NSEvent theEvent)
         {
-            var enemy = EnemySprite.CreateEnemyAt(theEvent.LocationInNode(this));
+            GameMap.Hero.ShootSpell(theEvent.LocationInNode(this));
+            /*var enemy = EnemySprite.CreateEnemyAt(theEvent.LocationInNode(this));
             map.Enemies.Add(enemy);
-            AddChild(enemy);
+            AddChild(enemy);*/
         }
 
 
@@ -129,7 +169,7 @@ namespace TheTaleOfAHero
                     _rightKeyPressed = true;
                     break;
                 case 126:
-                    map.Hero.Jump();
+                    GameMap.Hero.Jump();
                     break;
             }
             // 124 - right
@@ -158,9 +198,9 @@ namespace TheTaleOfAHero
         public void DoHeroMovement()
         {
             if (_leftKeyPressed)
-                map.Hero.MoveLeft();
+                GameMap.Hero.MoveLeft();
             if (_rightKeyPressed)
-                map.Hero.MoveRight();
+                GameMap.Hero.MoveRight();
         }
 
         #endregion
@@ -169,7 +209,7 @@ namespace TheTaleOfAHero
 
         bool IsEndGameCondition()
         {
-            return map.Enemies.Count == 0 || map.Hero.Position.Y < 0;
+            return GameMap.Enemies.Count == 0 || GameMap.Hero.Position.Y < 0;
         }
 
         #endregion
@@ -177,13 +217,18 @@ namespace TheTaleOfAHero
         public override void Update(double currentTime)
         {
             DoHeroMovement();
-
+            UpdateCamera();
             // End game condititon
             if(IsEndGameCondition())
             {
                 var menuScene = FromFile<MenuScene>("GameScenes/MenuScene");
                 menuScene.ScaleMode = SKSceneScaleMode.ResizeFill;
                 View.PresentScene(menuScene);
+            }
+
+            foreach(var enemy in GameMap.Enemies)
+            {
+                enemy.AttackIfCooldowned(GameMap.Hero.Position);
             }
             //Camera.Position = new CGPoint(map.Hero.Position.X, Camera.Position.Y);
         }
