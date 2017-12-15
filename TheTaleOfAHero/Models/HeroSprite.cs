@@ -40,7 +40,6 @@ namespace TheTaleOfAHero.Models
             if (XScale > 0)
                 XScale *= -1;
 
-            // TODO: slow down this shit
             // Change walking texture
             if (Texture == _heroStand)
                 ApplyTexture(_heroMoving);

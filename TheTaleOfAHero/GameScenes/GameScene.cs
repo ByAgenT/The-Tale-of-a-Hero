@@ -12,11 +12,27 @@ namespace TheTaleOfAHero
     public class GameScene : SKScene, ISKPhysicsContactDelegate
     {
 
-        // TODO: remove magic numbers
-
+        // Scene constants
         const string MAP_FILE = "Map.txt";
 
+        // Physics constants
+        const int GRAVITY = -5;
+
+        // Key constants
+        const int LEFT_KEY = 123;
+        const int RIGHT_KEY = 124;
+        const int UP_KEY = 126;
+        const int W_KEY = 13;
+        const int A_KEY = 0;
+        const int D_KEY = 2;
+
+
+        bool _endgame;
+
         Map GameMap { get; set; }
+
+        nfloat _windowWidth, _windowHeight;
+
 
 
         public GameScene(IntPtr handle) : base(handle)
@@ -27,13 +43,8 @@ namespace TheTaleOfAHero
             // Setup scene size to match map size
             Scene.Size = new CGSize(GameMap.Width, GameMap.Height);
 
-            Camera = new SKCameraNode()
-            {
-                Position = new CGPoint(1600 / 2, 1000 / 2)
-            };
-
             // Setup gravity
-            PhysicsWorld.Gravity = new CGVector(0, -5);
+            PhysicsWorld.Gravity = new CGVector(0, GRAVITY);
 
             // Assign contact delegate to this object (impl. ISKPhysicsContactDelegate)
             PhysicsWorld.ContactDelegate = this;
@@ -41,6 +52,15 @@ namespace TheTaleOfAHero
 
         public override void DidMoveToView(SKView view)
         {
+            _windowWidth = view.Window.Frame.Width;
+            _windowHeight = view.Window.Frame.Height;
+
+            // Initialize camera
+            Camera = new SKCameraNode()
+            {
+                Position = new CGPoint(_windowWidth / 2, _windowHeight / 2)
+            };
+
             RenderScene();
         }
 
@@ -59,17 +79,20 @@ namespace TheTaleOfAHero
 
         }
 
+        /// <summary>
+        /// Updates the camera.
+        /// </summary>
         void UpdateCamera()
         {
             var heroPosition = GameMap.Hero.Position;
             int mapSegment = 0;
-            for (int border = 1600; border <= GameMap.Width; border += 1600)
+            for (var border = _windowWidth; border <= GameMap.Width; border += _windowWidth)
             {
                 ++mapSegment;
-                if (GameMap.Hero.Position.X < border && GameMap.Hero.Position.X > border - 1600)
+                if (GameMap.Hero.Position.X < border && GameMap.Hero.Position.X > border - _windowWidth)
                     break;
             }
-            Camera.Position = new CGPoint(1600 * (mapSegment - 1) + 1600 / 2, 1000 / 2);
+            Camera.Position = new CGPoint(_windowWidth * (mapSegment - 1) + _windowWidth / 2, _windowHeight / 2);
         }
 
         [Export("didBeginContact:")]
@@ -123,21 +146,32 @@ namespace TheTaleOfAHero
             {
                 firstBody.Node.RemoveFromParent();
             }
+            if((firstBody.CategoryBitMask & CollisionCategory.Hero) != 0 &&
+               (secondBody.CategoryBitMask & CollisionCategory.Spell) != 0)
+            {
+                if(((ShotSprite)secondBody.Node).Type == SpellType.Enemy)
+                {
+                    SetEndGameCondition();
+                }
+            }
+
         }
 
 
-
+        /// <summary>
+        /// Draws scene background
+        /// </summary>
         void DrawBackground() {
 
             // TODO: optimize background rendering
 
             SKSpriteNode background = new SKSpriteNode();
-            for (int i = 0; i < GameMap.Width; i += 1600)
+            for (nfloat i = 0; i < GameMap.Width; i += _windowWidth)
             {
                 var bgpart = SKSpriteNode.FromImageNamed("GameStage.png");
                 bgpart.AnchorPoint = new CGPoint(0, 0);
                 bgpart.ZPosition = -1;
-                bgpart.Size = new CGSize(1600, 1000);
+                bgpart.Size = new CGSize(_windowWidth, _windowHeight);
                 bgpart.Position = new CGPoint(i, 0);
                 AddChild(bgpart);
             }
@@ -162,19 +196,19 @@ namespace TheTaleOfAHero
             // Do something when key is pressed
             switch(theEvent.KeyCode) 
             {
-                case 123:
+                case LEFT_KEY:
+                case A_KEY:
                     _leftKeyPressed = true;
                     break;
-                case 124:
+                case RIGHT_KEY:
+                case D_KEY:
                     _rightKeyPressed = true;
                     break;
-                case 126:
+                case UP_KEY:
+                case W_KEY:
                     GameMap.Hero.Jump();
                     break;
             }
-            // 124 - right
-            // 123 - left
-            // 126 - jump
         }
 
         public override void KeyUp(NSEvent theEvent)
@@ -182,10 +216,12 @@ namespace TheTaleOfAHero
             // Release variables for stop moving
             switch (theEvent.KeyCode)
             {
-                case 123:
+                case LEFT_KEY:
+                case A_KEY:
                     _leftKeyPressed = false;
                     break;
-                case 124:
+                case RIGHT_KEY:
+                case D_KEY:
                     _rightKeyPressed = false;
                     break;
             }
@@ -195,6 +231,9 @@ namespace TheTaleOfAHero
 
         #region Movement
 
+        /// <summary>
+        /// Handle the hero movement
+        /// </summary>
         public void DoHeroMovement()
         {
             if (_leftKeyPressed)
@@ -205,11 +244,26 @@ namespace TheTaleOfAHero
 
         #endregion
 
-        #region Game Condition
+        #region Game Conditions
 
+        /// <summary>
+        /// Return if the game is in the end condition .
+        /// </summary>
+        /// <returns><c>true</c>, if end game condition was occured, <c>false</c> otherwise.</returns>
         bool IsEndGameCondition()
         {
-            return GameMap.Enemies.Count == 0 || GameMap.Hero.Position.Y < 0;
+            return GameMap.Enemies.Count == 0 || GameMap.Hero.Position.Y < 0 || _endgame;
+        }
+
+
+        bool IsWin()
+        {
+            return GameMap.Enemies.Count == 0;
+        }
+
+        void SetEndGameCondition()
+        {
+            _endgame = true;
         }
 
         #endregion
@@ -218,9 +272,28 @@ namespace TheTaleOfAHero
         {
             DoHeroMovement();
             UpdateCamera();
+
             // End game condititon
             if(IsEndGameCondition())
             {
+                if(IsWin())
+                {
+                    NSAlert alert = new NSAlert
+                    {
+                        MessageText = "You win!",
+                        AlertStyle = NSAlertStyle.Informational
+                    };
+                    alert.RunModal();
+                }
+                else
+                {
+                    NSAlert alert = new NSAlert
+                    {
+                        MessageText = "You lose!",
+                        AlertStyle = NSAlertStyle.Informational
+                    };
+                    alert.RunModal();
+                }
                 var menuScene = FromFile<MenuScene>("GameScenes/MenuScene");
                 menuScene.ScaleMode = SKSceneScaleMode.ResizeFill;
                 View.PresentScene(menuScene);

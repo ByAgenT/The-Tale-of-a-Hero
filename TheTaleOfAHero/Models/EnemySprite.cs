@@ -22,7 +22,7 @@ namespace TheTaleOfAHero.Models
             PhysicsBody.AllowsRotation = false;
             PhysicsBody.CategoryBitMask = CollisionCategory.Enemy;
             PhysicsBody.ContactTestBitMask = CollisionCategory.Hero | CollisionCategory.Spell | CollisionCategory.Platform;
-
+            PhysicsBody.CollisionBitMask ^= CollisionCategory.Spell;
         }
 
         #region Shooting and Hero Detection

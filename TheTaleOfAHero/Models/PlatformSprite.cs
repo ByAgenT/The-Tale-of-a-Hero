@@ -8,7 +8,7 @@ namespace TheTaleOfAHero.Models
     public class PlatformSprite : SKSpriteNode
     {
         const string RESOURCE_PATH = "Platform/";
-        const string LONG_PLATFORM_IMAGE = ""; // TODO: find long platform image
+        const string LONG_PLATFORM_IMAGE = RESOURCE_PATH + "LongPlatform.png";
         const string MEDIUM_PLATFORM_IMAGE = RESOURCE_PATH + "MediumPlatform.png";
         const string SHORT_PLATFORM_IMAGE = RESOURCE_PATH + "ShortPlatform.png";
 

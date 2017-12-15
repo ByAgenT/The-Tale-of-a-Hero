@@ -96,6 +96,7 @@
     </BundleResource>
     <BundleResource Include="Resources\Hero\HeroSpell.png" />
     <BundleResource Include="Resources\Enemy\EnemySpell.png" />
+    <BundleResource Include="Resources\Platform\LongPlatform.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

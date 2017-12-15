@@ -53,10 +53,8 @@ namespace TheTaleOfAHero.Models
                 {
                     throw new IncorrectMapException("Map definition is incorrect");    
                 }
-                // TODO: add safety
                 switch(mapItem[0])
                 {
-                    // TODO: verify lenghts of the args
                     case "HERO":
                         {
                             var xcoord = Convert.ToDouble(mapItem[1]);
