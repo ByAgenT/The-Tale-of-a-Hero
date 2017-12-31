@@ -25,8 +25,6 @@ namespace TheTaleOfAHero.Models
             PhysicsBody.CollisionBitMask ^= CollisionCategory.Spell;
         }
 
-        #region Shooting and Hero Detection
-
         public void ShootSpell(CGPoint position)
         {
             Cooldown = 100;
@@ -39,7 +37,7 @@ namespace TheTaleOfAHero.Models
             spell.ZRotation = (nfloat)Math.Atan2(vector.dy, vector.dx);
         }
 
-        public void AttackIfCooldowned(CGPoint position)
+        public void AttackIfCooledDown(CGPoint position)
         {
             if (Cooldown == 0)
                 ShootSpell(position);
@@ -47,7 +45,6 @@ namespace TheTaleOfAHero.Models
                 Cooldown--;
         }
 
-        #endregion
 
         public static EnemySprite CreateEnemyAt(CGPoint point) {
             return new EnemySprite()

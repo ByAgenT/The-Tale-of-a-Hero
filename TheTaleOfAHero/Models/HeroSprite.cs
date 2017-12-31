@@ -32,8 +32,6 @@ namespace TheTaleOfAHero.Models
             PhysicsBody.AllowsRotation = false;
         }
 
-        #region Hero Movement
-
         public void MoveLeft()
         {
             // Flip texture left
@@ -82,10 +80,6 @@ namespace TheTaleOfAHero.Models
             _jumpsAvailiable = 2;
         }
 
-        #endregion
-
-        #region Shooting
-
         public void ShootSpell(CGPoint position)
         {
             // Create vector of the movement
@@ -98,10 +92,6 @@ namespace TheTaleOfAHero.Models
             spell.RunAction(SKAction.RepeatActionForever(SKAction.RotateByAngle((nfloat)6.28, 1)));
         }
 
-        #endregion
-
-        #region Textures
-
         /// <summary>
         /// Applies the texture.
         /// </summary>
@@ -111,8 +101,6 @@ namespace TheTaleOfAHero.Models
             Texture = texture;
             Size = Texture.Size;
         }
-
-        #endregion
 
         /// <summary>
         /// Creates the hero at the given point.

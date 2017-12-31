@@ -185,9 +185,6 @@ namespace TheTaleOfAHero
             AddChild(enemy);*/
         }
 
-
-        #region Key Handling
-
         bool _leftKeyPressed, _rightKeyPressed;
 
 
@@ -227,10 +224,6 @@ namespace TheTaleOfAHero
             }
         }
 
-        #endregion
-
-        #region Movement
-
         /// <summary>
         /// Handle the hero movement
         /// </summary>
@@ -241,10 +234,6 @@ namespace TheTaleOfAHero
             if (_rightKeyPressed)
                 GameMap.Hero.MoveRight();
         }
-
-        #endregion
-
-        #region Game Conditions
 
         /// <summary>
         /// Return if the game is in the end condition .
@@ -266,7 +255,6 @@ namespace TheTaleOfAHero
             _endgame = true;
         }
 
-        #endregion
 
         public override void Update(double currentTime)
         {
@@ -303,7 +291,6 @@ namespace TheTaleOfAHero
             {
                 enemy.AttackIfCooldowned(GameMap.Hero.Position);
             }
-            //Camera.Position = new CGPoint(map.Hero.Position.X, Camera.Position.Y);
         }
 
     }
